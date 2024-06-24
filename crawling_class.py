@@ -4,7 +4,6 @@ from selenium import webdriver as web
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-import tkinter.messagebox as ms
 import time
 import pandas as pd
 class stock_craw:
