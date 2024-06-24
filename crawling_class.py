@@ -15,6 +15,7 @@ class stock_craw:
     # 10개 종목 리스트 가져오기
     def name_craw(self):
         stock_list_res = res.get("https://finance.naver.com/sise/lastsearch2.naver")
+        time.sleep(3)
         if stock_list_res.status_code == 200:
             stock_list_html = bs(stock_list_res.text, "lxml")
             count = 0
@@ -48,6 +49,7 @@ class stock_craw:
         options.add_argument("--headless")
         driver = web.Chrome(options=options)
         driver.get("https://finance.naver.com/")
+        time.sleep(3)
         driver.implicitly_wait(3)
         driver.find_element(By.XPATH,'//*[@id="stock_items"]').send_keys(search)
         time.sleep(1)
@@ -71,6 +73,7 @@ class stock_craw:
         options.add_argument("--headless")
         driver = webdriver.Chrome(options=options)
         driver.get("https://finance.naver.com/")
+        time.sleep(3)
         driver.implicitly_wait(3)
         driver.find_element(By.XPATH,'//*[@id="stock_items"]').send_keys('한국가스공사')
         time.sleep(1)
