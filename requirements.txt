@@ -1,1 +1,6 @@
 streamlit
+beautifulsoup4
+selenium
+tkinter
+time
+pandas
