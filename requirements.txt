@@ -1,8 +1,7 @@
 streamlit
 beautifulsoup4
 selenium
-pandas
-tkinter
+pandas 
 requests
 pymysql
 yfinance
