@@ -46,7 +46,7 @@ class stock_craw:
     def search_craw(search):
         options = Options()
         options.add_argument("--headless")
-        driver = webdriver.Chrome(options=options)
+        driver = web.Chrome(options=options)
         driver.get("https://finance.naver.com/")
         driver.implicitly_wait(3)
         driver.find_element(By.XPATH,'//*[@id="stock_items"]').send_keys(search)
