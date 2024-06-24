@@ -44,9 +44,9 @@ class stock_craw:
     # 검색 종목 코드 가져오기
     @staticmethod
     def search_craw(search):
-        op = Options()
-        op.add_argument("headless")
-        driver = web.Chrome(options=op)
+        options = Options()
+        options.add_argument("--headless")
+        driver = webdriver.Chrome(options=options)
         driver.get("https://finance.naver.com/")
         driver.implicitly_wait(3)
         driver.find_element(By.XPATH,'//*[@id="stock_items"]').send_keys(search)
@@ -67,9 +67,9 @@ class stock_craw:
     # 뉴스 url, 네임 가져오기
     @staticmethod
     def news_craw():
-        op = Options()
-        op.add_argument("headless")
-        driver = web.Chrome(options=op)
+        options = Options()
+        options.add_argument("--headless")
+        driver = webdriver.Chrome(options=options)
         driver.get("https://finance.naver.com/")
         driver.implicitly_wait(3)
         driver.find_element(By.XPATH,'//*[@id="stock_items"]').send_keys('한국가스공사')
