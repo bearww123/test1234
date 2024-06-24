@@ -7,6 +7,12 @@ import time
 import pandas as pd
 import streamlit as st
 
+# Streamlit 페이지 설정
+st.set_page_config(
+    page_title="주식 크롤링 트리거",
+    layout="wide"
+)
+
 # 크롤링 클래스 정의
 class stock_craw:
     def __init__(self):
