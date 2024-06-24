@@ -5,15 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import time
 import pandas as pd
-import streamlit as st
 
-# Streamlit 페이지 설정
-st.set_page_config(
-    page_title="주식 크롤링 트리거",
-    layout="wide"
-)
-
-# 크롤링 클래스 정의
 class stock_craw:
     def __init__(self):
         self.stock_name = []  # 종목 이름
@@ -49,12 +41,34 @@ class stock_craw:
                     stock_code_source = temp_url_html.find(attrs={"class": "code"}).text
                     self.stock_code.append(stock_code_source + ".KQ")
 
-    # 뉴스 url, 네임 가져오기
-    def news_craw(self):      
+    # 검색 종목 코드 가져오기
+    @staticmethod
+    def search_craw(search):
         op = Options()
-        op.add_argument("--headless")
-        op.add_argument("--no-sandbox")
-        op.add_argument("--disable-dev-shm-usage")
+        op.add_argument("headless")
+        driver = web.Chrome(options=op)
+        driver.get("https://finance.naver.com/")
+        driver.implicitly_wait(3)
+        driver.find_element(By.XPATH,'//*[@id="stock_items"]').send_keys(search)
+        time.sleep(1)
+        driver.find_element(By.XPATH,'//*[@id="atcmp"]/div[1]/div/ul/li/a').click()
+        time.sleep(1)
+        if driver.find_element(By.XPATH,'//*[@id="middle"]/div[1]/div[1]/div/img').get_attribute('alt') == '코스피':
+            search_stock_code = ((driver.find_element(By.XPATH,'//*[@id="middle"]/div[1]/div[1]/div/span[1]').text) + ".KS")
+            print(search_stock_code)
+        elif driver.find_element(By.XPATH,'//*[@id="middle"]/div[1]/div[1]/div/img').get_attribute('alt') == '코스닥':
+            search_stock_code = ((driver.find_element(By.XPATH,'//*[@id="middle"]/div[1]/div[1]/div/span[1]').text) + ".KQ")
+            print(search_stock_code)
+        else:
+            print("확인불가: 다시 검색해주세요")
+        driver.quit()
+        return search_stock_code
+
+    # 뉴스 url, 네임 가져오기
+    @staticmethod
+    def news_craw():
+        op = Options()
+        op.add_argument("headless")
         driver = web.Chrome(options=op)
         driver.get("https://finance.naver.com/")
         driver.implicitly_wait(3)
@@ -64,34 +78,17 @@ class stock_craw:
         time.sleep(1)
 
         titles = []
-        urls = []
+        urls = [] 
 
         for data in driver.find_elements(By.CLASS_NAME,'news_section'):
             for ud in range(1,3):
                 for ld in range(1,6):
-                    f_data = data.find_element(By.XPATH,f'//*[@id="content"]/div[3]/div[1]/ul[{ud}]/li[{ld}]/span/a')
-                    titles.append(f_data.text)
-                    urls.append(f_data.get_attribute('href'))
+                    try:
+                        f_data = data.find_element(By.XPATH,f'//*[@id="content"]/div[3]/div[1]/ul[{ud}]/li[{ld}]/span/a')
+                        titles.append(f_data.text)
+                        urls.append(f_data.get_attribute('href'))
+                    except:
+                        pass
         driver.quit()
         news_df = pd.DataFrame({'제목': titles, '주소': urls})
         return news_df
-
-# Streamlit 앱 설정
-st.title("주식 크롤링 및 뉴스 보기")
-
-sc = stock_craw()
-
-if st.button("종목 이름 크롤링"):
-    sc.name_craw()
-    st.write("크롤링된 종목 이름:")
-    st.write(sc.stock_name)
-
-if st.button("종목 코드 크롤링"):
-    sc.url_craw()
-    st.write("크롤링된 종목 코드:")
-    st.write(sc.stock_code)
-
-if st.button("뉴스 크롤링"):
-    news_df = sc.news_craw()
-    st.write("크롤링된 뉴스:")
-    st.dataframe(news_df)
